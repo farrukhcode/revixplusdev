@@ -43,6 +43,7 @@ export const organizationSchema: WithContext<Organization> = {
     "@type": "Person",
     name: founder.name,
     jobTitle: founder.role,
+    ...(founder.photo && { image: absoluteUrl(founder.photo) }),
     sameAs: [founder.linkedin ?? site.social.linkedin, site.social.github],
   },
   knowsAbout: [

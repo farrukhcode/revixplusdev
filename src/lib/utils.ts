@@ -8,6 +8,14 @@ export function cn(...inputs: ClassValue[]) {
 /** False for content still marked "TODO" (an unconfirmed fact or pending figure), which is never shown. */
 export const known = (value?: string): value is string => !!value && !value.startsWith("TODO");
 
+/** "Farrukh Bilal" → "FB", for avatar fallbacks */
+export const initials = (name: string) =>
+  name
+    .split(" ")
+    .map((w) => w[0])
+    .join("")
+    .slice(0, 2);
+
 export function slugToTitle(slug: string) {
   return slug
     .split("-")

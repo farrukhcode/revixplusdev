@@ -2,6 +2,7 @@
 
 import { ChevronRight, Hammer, type LucideIcon, PenTool, Rocket, Search, TrendingUp } from "lucide-react";
 import { MotionConfig, motion, useInView } from "motion/react";
+import Image from "next/image";
 import { Fragment, useRef } from "react";
 import { Surface } from "@/components/ui/Surface";
 import StatsCounter from "@/components/ui/stats-counter";
@@ -10,8 +11,8 @@ import { IsometricBoxes } from "@/components/ui/why-us-bento/isometric-boxes";
 import { home } from "@/content/home";
 import { processSteps } from "@/content/process";
 import { site } from "@/content/site";
-import { team } from "@/content/team";
-import { cn } from "@/lib/utils";
+import { liveTeam as members } from "@/content/team";
+import { cn, initials } from "@/lib/utils";
 
 // VengeanceUI Why Us Bento (GitHub source, not in the registry), adapted:
 // RevixPlus content from src/content, Surface cards and theme tokens instead of
@@ -28,14 +29,6 @@ const AVATAR_TINTS = [
 ];
 const ROLL_TITLE = home.ai.eyebrow;
 const EASE = [0.33, 1, 0.68, 1] as const;
-
-const members = team.filter((m) => m.status === "live");
-const initials = (name: string) =>
-  name
-    .split(" ")
-    .map((w) => w[0])
-    .join("")
-    .slice(0, 2);
 
 const panel = "relative flex flex-col p-6 sm:p-7 min-h-[200px]";
 const title = "t-h4 text-fg";
@@ -154,7 +147,7 @@ export function WhyUsBento({ className }: { className?: string }) {
                 key={m.name}
                 title={`${m.name}, ${m.role}`}
                 className={cn(
-                  "grid size-10 place-items-center rounded-full text-sm font-semibold ring-4 ring-card",
+                  "grid size-10 place-items-center overflow-hidden rounded-full text-sm font-semibold ring-4 ring-card",
                   AVATAR_TINTS[i % AVATAR_TINTS.length],
                   i > 0 && "-ml-1.5",
                 )}
@@ -165,7 +158,11 @@ export function WhyUsBento({ className }: { className?: string }) {
                 }}
                 transition={{ type: "spring", stiffness: 300, damping: 20 }}
               >
-                <span aria-hidden="true">{initials(m.name)}</span>
+                {m.photo ? (
+                  <Image src={m.photo} alt="" width={40} height={40} className="size-full object-cover" />
+                ) : (
+                  <span aria-hidden="true">{initials(m.name)}</span>
+                )}
                 <span className="sr-only">
                   {m.name}, {m.role}
                 </span>
