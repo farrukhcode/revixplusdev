@@ -1,0 +1,863 @@
+@import "tailwindcss";
+@import "lenis/dist/lenis.css";
+
+/* Theme switch: `.dark` on <html>, set before first paint by the inline script in layout.tsx */
+@custom-variant dark (&:where(.dark, .dark *));
+
+/* ---------------------------------------------------------------------------
+   RevixPlus color tokens. Light on :root, dark on .dark. Nothing in the UI
+   uses a raw color: everything resolves to one of these.
+   Names follow shadcn so VengeanceUI components theme themselves.
+   Text contrast on --background (WCAG): foreground ~18:1, muted ~9:1, subtle >5:1.
+--------------------------------------------------------------------------- */
+:root {
+  color-scheme: light;
+
+  --background: #f6f6fb;
+  --foreground: #0d0d1a;
+  --card: #ffffff;
+  --card-foreground: var(--foreground);
+  --popover: #ffffff;
+  --popover-foreground: var(--foreground);
+  --muted: #efeff6;
+  --muted-foreground: #45455e;
+  --subtle-foreground: #64647e;
+  --secondary: #efeff6;
+  --secondary-foreground: var(--foreground);
+  --accent: #e8e8f2;
+  --accent-foreground: var(--foreground);
+  --border: #e2e2ec;
+  --border-strong: #c9c9da;
+  --input: #d9d9e6;
+  --primary: #5b34f0;
+  --primary-foreground: #ffffff;
+  --ring: #5b34f0;
+  --destructive: #d61f45;
+
+  /* Brand spectrum, deepened so each passes 4.5:1 as text on light surfaces */
+  --violet: #6d45f5;
+  --cyan: #08788c;
+  --blue: #2459e0;
+  --lime: #4a7a0c;
+  --pink: #c0157a;
+  --orange: #a84b06;
+
+  /* Depth */
+  --shadow-card: 0 1px 2px rgb(20 20 60 / 0.05), 0 12px 32px -14px rgb(20 20 60 / 0.14);
+  --shadow-lift: 0 2px 6px rgb(20 20 60 / 0.06), 0 28px 56px -20px rgb(60 30 160 / 0.28);
+  --glow: color-mix(in oklab, var(--violet) 14%, transparent);
+  --grid-line: rgb(13 13 26 / 0.05);
+  --backdrop-a: color-mix(in oklab, var(--violet) 10%, transparent);
+  --backdrop-b: color-mix(in oklab, var(--cyan) 8%, transparent);
+  /* Radial glow button: deep base + pale highlight */
+  --glow-base: #1b1446;
+  --glow-hi: #e4fbb0;
+}
+
+.dark {
+  color-scheme: dark;
+
+  --background: #0a0a12;
+  --foreground: #f4f4fa;
+  --card: #12121d;
+  --popover: #15151f;
+  --muted: #1a1a28;
+  --muted-foreground: #b4b4ca;
+  --subtle-foreground: #8e8ea8;
+  --secondary: #1a1a28;
+  --accent: #20202f;
+  --border: #262637;
+  --border-strong: #3a3a55;
+  --input: #2c2c40;
+  --primary: #7050ff;
+  --primary-foreground: #ffffff;
+  --ring: #a48bff;
+  --destructive: #ff5c7a;
+
+  /* Brand spectrum: electric and saturated on the dark canvas */
+  --violet: #a48bff;
+  --cyan: #22e1f0;
+  --blue: #4c8dff;
+  --lime: #b8f53d;
+  --pink: #ff4fb0;
+  --orange: #ff9a3d;
+
+  --shadow-card: inset 0 1px 0 rgb(255 255 255 / 0.03), 0 16px 40px -18px rgb(0 0 0 / 0.7);
+  --shadow-lift:
+    inset 0 1px 0 rgb(255 255 255 / 0.05), 0 28px 60px -22px rgb(0 0 0 / 0.8),
+    0 0 48px -12px color-mix(in oklab, var(--primary) 45%, transparent);
+  --glow: color-mix(in oklab, var(--violet) 22%, transparent);
+  --grid-line: rgb(255 255 255 / 0.035);
+  --backdrop-a: color-mix(in oklab, var(--primary) 22%, transparent);
+  --backdrop-b: color-mix(in oklab, var(--cyan) 12%, transparent);
+  --glow-base: #0d0a22;
+  --glow-hi: #efffb0;
+}
+
+/* Theme-independent tokens */
+:root {
+  --r-sm: 12px;
+  --r-md: 16px;
+  --r-lg: 24px;
+  --r-xl: 32px;
+  --r-pill: 999px;
+
+  --ease-out: cubic-bezier(0.23, 1, 0.32, 1);
+  --ease-in-out: cubic-bezier(0.77, 0, 0.175, 1);
+  --ease-drawer: cubic-bezier(0.32, 0.72, 0, 1);
+  /* Slight overshoot: things land and settle, a "snap" into place */
+  --ease-snap: cubic-bezier(0.34, 1.56, 0.64, 1);
+  --dur-press: 120ms;
+  --dur-ui: 200ms;
+  --dur-sheet: 320ms;
+
+  --gutter: clamp(1rem, 4vw, 2.5rem);
+  --nav-h: 56px;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-border: var(--border);
+  --color-border-strong: var(--border-strong);
+  --color-input: var(--input);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-ring: var(--ring);
+  --color-destructive: var(--destructive);
+
+  /* Short aliases used across the site's own components */
+  --color-fg: var(--foreground);
+  --color-fg-2: var(--muted-foreground);
+  --color-fg-3: var(--subtle-foreground);
+
+  --color-violet: var(--violet);
+  --color-cyan: var(--cyan);
+  --color-blue: var(--blue);
+  --color-lime: var(--lime);
+  --color-pink: var(--pink);
+  --color-orange: var(--orange);
+
+  --font-sans: var(--font-geist-sans), ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-mono: var(--font-geist-mono), ui-monospace, "SF Mono", Menlo, monospace;
+  --radius-sm: var(--r-sm);
+  --radius-md: var(--r-md);
+  --radius-lg: var(--r-lg);
+  --radius-xl: var(--r-xl);
+  --ease-out: var(--ease-out);
+  --ease-in-out: var(--ease-in-out);
+}
+
+/* ---------------------------------------------------------------------------
+   Base
+--------------------------------------------------------------------------- */
+@layer base {
+  *,
+  ::before,
+  ::after {
+    border-color: var(--border);
+  }
+}
+
+html {
+  background: var(--background);
+  scroll-behavior: auto;
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  background: transparent;
+  color: var(--foreground);
+  font-family: var(--font-sans);
+  font-size: 1.0625rem;
+  line-height: 1.6;
+  font-optical-sizing: auto;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  overflow-x: clip;
+}
+
+/* Static backdrop: two soft brand glows and a faint grid. Fixed and never
+   animated, so it gets its own layer and costs nothing while scrolling. */
+body::before,
+body::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+}
+body::before {
+  background:
+    radial-gradient(56rem 34rem at 12% -12%, var(--backdrop-a), transparent 70%),
+    radial-gradient(48rem 30rem at 92% -6%, var(--backdrop-b), transparent 70%), var(--background);
+}
+body::after {
+  background-image:
+    linear-gradient(var(--grid-line) 1px, transparent 1px),
+    linear-gradient(90deg, var(--grid-line) 1px, transparent 1px);
+  background-size: 64px 64px;
+  mask-image: radial-gradient(ellipse 90% 70% at 50% 0%, black, transparent 78%);
+}
+
+::selection {
+  background: color-mix(in oklab, var(--primary) 30%, transparent);
+  color: var(--foreground);
+}
+
+:focus-visible {
+  outline: 2px solid var(--ring);
+  outline-offset: 3px;
+  border-radius: 6px;
+}
+
+/* Component classes live in the components layer so Tailwind utilities
+   (text-violet, sticky, border-*) can override them on any element. */
+@layer components {
+  /* Typography scale: tracking is size specific (tighter as it grows) */
+  .t-display {
+    font-size: clamp(2.75rem, 6.4vw, 6rem);
+    line-height: 1;
+    letter-spacing: -0.035em;
+    font-weight: 650;
+  }
+  .t-h1 {
+    font-size: clamp(2.25rem, 5.5vw, 4.5rem);
+    line-height: 1.02;
+    letter-spacing: -0.03em;
+    font-weight: 650;
+  }
+  .t-h2 {
+    font-size: clamp(2rem, 4.5vw, 3.5rem);
+    line-height: 1.05;
+    letter-spacing: -0.025em;
+    font-weight: 650;
+  }
+  .t-h3 {
+    font-size: clamp(1.5rem, 2.6vw, 2.125rem);
+    line-height: 1.12;
+    letter-spacing: -0.018em;
+    font-weight: 600;
+  }
+  .t-h4 {
+    font-size: clamp(1.125rem, 1.6vw, 1.375rem);
+    line-height: 1.25;
+    letter-spacing: -0.01em;
+    font-weight: 600;
+  }
+  .t-lead {
+    font-size: clamp(1.125rem, 1.6vw, 1.3125rem);
+    line-height: 1.55;
+    letter-spacing: -0.005em;
+    color: var(--muted-foreground);
+  }
+  .t-body {
+    font-size: 1.0625rem;
+    line-height: 1.6;
+  }
+  .t-small {
+    font-size: 0.875rem;
+    line-height: 1.5;
+    letter-spacing: 0.01em;
+  }
+  .t-eyebrow {
+    font-size: 0.75rem;
+    line-height: 1.2;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    font-weight: 600;
+    color: var(--violet);
+  }
+
+  .container-x {
+    width: 100%;
+    max-width: 1280px;
+    margin-inline: auto;
+    padding-inline: var(--gutter);
+  }
+
+  /* ---------------------------------------------------------------------------
+   Surfaces
+   .surface is every card: solid, bordered, readable in both themes.
+   .glass is only for floating chrome (header, dock, menu) where a light blur
+   over static content is cheap.
+--------------------------------------------------------------------------- */
+  .surface {
+    position: relative;
+    isolation: isolate;
+    background: var(--card);
+    color: var(--card-foreground);
+    border: 1px solid var(--border);
+    border-radius: var(--r-lg);
+    box-shadow: var(--shadow-card);
+  }
+  .surface-muted {
+    background: var(--muted);
+  }
+
+  /* Soft glow that follows the pointer (--mx/--my set from JS, 0 to 1). Sits under the content. */
+  .surface-spotlight::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    border-radius: inherit;
+    pointer-events: none;
+    background: radial-gradient(
+      420px circle at calc(var(--mx, 0.5) * 100%) calc(var(--my, 0) * 100%),
+      var(--glow),
+      transparent 65%
+    );
+    opacity: 0;
+    transition: opacity var(--dur-ui) var(--ease-out);
+  }
+  .surface-spotlight:hover::before {
+    opacity: 1;
+  }
+
+  /* Rainbow edge: a conic spectrum around the card's center (twice round, so the
+     hue keeps flowing along a straight edge), masked to the border ring and then
+     to a circle around the pointer, so only the border near the cursor lights up.
+     Centering it on the pointer instead split a straight edge into two flat colors. */
+  .surface-spotlight::after {
+    --edge-at: calc(var(--mx, 0.5) * 100%) calc(var(--my, 0) * 100%);
+    content: "";
+    position: absolute;
+    inset: -1px;
+    padding: 2px;
+    border-radius: inherit;
+    pointer-events: none;
+    background: conic-gradient(
+      from 0deg at 50% 50%,
+      var(--violet),
+      var(--blue),
+      var(--cyan),
+      var(--lime),
+      var(--orange),
+      var(--pink),
+      var(--violet),
+      var(--blue),
+      var(--cyan),
+      var(--lime),
+      var(--orange),
+      var(--pink),
+      var(--violet)
+    );
+    -webkit-mask:
+      radial-gradient(150px circle at var(--edge-at), #000 0%, transparent 100%),
+      linear-gradient(#000 0 0) content-box,
+      linear-gradient(#000 0 0);
+    -webkit-mask-composite: source-in, xor;
+    mask:
+      radial-gradient(150px circle at var(--edge-at), #000 0%, transparent 100%),
+      linear-gradient(#000 0 0) content-box,
+      linear-gradient(#000 0 0);
+    mask-composite: intersect, exclude;
+    opacity: 0;
+    transition: opacity var(--dur-ui) var(--ease-out);
+  }
+  .surface-spotlight:hover::after {
+    opacity: 1;
+  }
+
+  .surface-interactive {
+    transition:
+      transform var(--dur-ui) var(--ease-out),
+      box-shadow var(--dur-ui) var(--ease-out),
+      border-color var(--dur-ui) var(--ease-out);
+  }
+  @media (hover: hover) and (pointer: fine) {
+    .surface-interactive:hover {
+      transform: translateY(-3px);
+      border-color: color-mix(in oklab, var(--violet) 45%, var(--border));
+      box-shadow: var(--shadow-lift);
+    }
+  }
+  .surface-interactive:active {
+    transform: scale(0.985);
+    transition-duration: var(--dur-press);
+  }
+
+  .glass {
+    position: relative;
+    background: var(--card);
+    border: 1px solid var(--border);
+    box-shadow: var(--shadow-card);
+  }
+  @supports (backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px)) {
+    .glass {
+      background: color-mix(in oklab, var(--card) 76%, transparent);
+      -webkit-backdrop-filter: blur(14px) saturate(150%);
+      backdrop-filter: blur(14px) saturate(150%);
+    }
+  }
+  @media (prefers-reduced-transparency: reduce) {
+    .glass {
+      background: var(--card);
+      -webkit-backdrop-filter: none;
+      backdrop-filter: none;
+    }
+  }
+  @media (prefers-contrast: more) {
+    .surface,
+    .glass {
+      border-color: var(--border-strong);
+    }
+  }
+
+  /* ---------------------------------------------------------------------------
+   Utilities
+--------------------------------------------------------------------------- */
+  .text-gradient {
+    background: linear-gradient(92deg, var(--violet), var(--blue) 45%, var(--cyan));
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+  .chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.35rem 0.75rem;
+    border-radius: var(--r-pill);
+    border: 1px solid var(--border);
+    background: var(--muted);
+    font-size: 0.8125rem;
+    line-height: 1.2;
+    letter-spacing: 0.01em;
+    color: var(--muted-foreground);
+    /* Short chips stay on one line; long ones wrap instead of pushing a phone layout sideways */
+    max-width: 100%;
+    text-wrap: balance;
+  }
+  .divider {
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--border-strong), transparent);
+  }
+}
+
+/* Hide scrollbar in horizontal swipers on touch */
+.no-scrollbar {
+  scrollbar-width: none;
+}
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+/* Reveal defaults (the observer adds .is-in; this is the pre-JS fallback) */
+.reveal {
+  opacity: 1;
+}
+html.js .reveal[data-reveal] {
+  opacity: 0;
+  transform: translateY(18px);
+}
+html.js .reveal[data-reveal].is-in {
+  opacity: 1;
+  transform: none;
+  transition:
+    opacity 600ms var(--ease-out),
+    transform 700ms var(--ease-snap);
+}
+@media (prefers-reduced-motion: reduce) {
+  html.js .reveal[data-reveal] {
+    transform: none;
+  }
+}
+
+/* Entry animation on mount for small UI (no JS state) */
+@starting-style {
+  .enter {
+    opacity: 0;
+    transform: translateY(6px) scale(0.98);
+  }
+}
+.enter {
+  transition:
+    opacity var(--dur-ui) var(--ease-out),
+    transform var(--dur-ui) var(--ease-out);
+}
+
+/* Gooey reveal on page load (hero headline, page titles), pure CSS: the heading paints,
+   melted, in the very first frame, so it counts as the LCP immediately instead of after
+   hydration re-splits it. The #goo-load alpha threshold is in the root layout; it switches
+   off when the melt finishes so resting text is crisp. Scroll reveals use GooeyTextReveal. */
+.goo-load {
+  filter: url(#goo-load) blur(0.4px);
+  animation: goo-load-done 0s linear 1.5s forwards;
+}
+.goo-load > span {
+  display: block;
+  animation: goo-load-in 1.4s cubic-bezier(0.215, 0.61, 0.355, 1) both;
+}
+@keyframes goo-load-in {
+  from {
+    filter: blur(0.4em);
+  }
+  to {
+    filter: blur(0);
+  }
+}
+@keyframes goo-load-done {
+  to {
+    filter: none;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .goo-load,
+  .goo-load > span {
+    filter: none;
+    animation: none;
+  }
+}
+
+/* VengeanceUI BorderBeam */
+@keyframes border-beam {
+  100% {
+    offset-distance: 100%;
+  }
+}
+/* Unlayered, so it beats the layered Tailwind utility without !important */
+@media (prefers-reduced-motion: reduce) {
+  .border-beam::after {
+    animation: none;
+  }
+}
+
+/* ---------------------------------------------------------------------------
+   VengeanceUI Animated Rays (hero backdrop). Drawn at quarter size and scaled
+   up: the blur hides the resolution and each frame repaints 1/16 of the pixels.
+--------------------------------------------------------------------------- */
+.rays {
+  --rays-stripe: var(--background);
+  /* Confined to the top right, behind the globe, clear of the headline */
+  mask-image: radial-gradient(ellipse 65% 75% at 88% 0%, black 25%, transparent 72%);
+}
+:root:not(.dark) .rays {
+  --rays-stripe: var(--card);
+}
+.rays__layer {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 25%;
+  height: 25%;
+  transform: scale(4);
+  transform-origin: 0 0;
+  background-size: 300%, 200%;
+  background-position:
+    50% 50%,
+    50% 50%;
+  filter: blur(2.5px) opacity(38%) saturate(190%);
+}
+:root:not(.dark) .rays__layer {
+  filter: blur(2.5px) invert(100%) opacity(50%);
+}
+.rays__flow {
+  position: absolute;
+  inset: 0;
+  background-size: 200%, 100%;
+  mix-blend-mode: difference;
+  animation: rays-shift 60s linear infinite;
+}
+.rays[data-paused="true"] .rays__flow {
+  animation-play-state: paused;
+}
+@keyframes rays-shift {
+  from {
+    background-position:
+      50% 50%,
+      50% 50%;
+  }
+  to {
+    background-position:
+      350% 50%,
+      350% 50%;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .rays__flow {
+    animation: none;
+  }
+}
+
+/* ---------------------------------------------------------------------------
+   VengeanceUI Radial Glow Button. Registered properties let the radial
+   gradient itself transition on hover; colors resolve to theme tokens.
+--------------------------------------------------------------------------- */
+@property --rg-pos-x {
+  syntax: "<percentage>";
+  initial-value: 40%;
+  inherits: false;
+}
+@property --rg-pos-y {
+  syntax: "<percentage>";
+  initial-value: 140%;
+  inherits: false;
+}
+@property --rg-spread-x {
+  syntax: "<percentage>";
+  initial-value: 130%;
+  inherits: false;
+}
+@property --rg-spread-y {
+  syntax: "<percentage>";
+  initial-value: 170%;
+  inherits: false;
+}
+@property --rg-color-1 {
+  syntax: "<color>";
+  initial-value: transparent;
+  inherits: false;
+}
+@property --rg-color-2 {
+  syntax: "<color>";
+  initial-value: transparent;
+  inherits: false;
+}
+@property --rg-color-3 {
+  syntax: "<color>";
+  initial-value: transparent;
+  inherits: false;
+}
+@property --rg-color-4 {
+  syntax: "<color>";
+  initial-value: transparent;
+  inherits: false;
+}
+@property --rg-color-5 {
+  syntax: "<color>";
+  initial-value: transparent;
+  inherits: false;
+}
+@property --rg-border-angle {
+  syntax: "<angle>";
+  initial-value: 180deg;
+  inherits: true;
+}
+@property --rg-border-color-1 {
+  syntax: "<color>";
+  initial-value: transparent;
+  inherits: true;
+}
+@property --rg-border-color-2 {
+  syntax: "<color>";
+  initial-value: transparent;
+  inherits: true;
+}
+@property --rg-stop-1 {
+  syntax: "<percentage>";
+  initial-value: 37.35%;
+  inherits: false;
+}
+@property --rg-stop-2 {
+  syntax: "<percentage>";
+  initial-value: 61.36%;
+  inherits: false;
+}
+@property --rg-stop-3 {
+  syntax: "<percentage>";
+  initial-value: 78.42%;
+  inherits: false;
+}
+@property --rg-stop-4 {
+  syntax: "<percentage>";
+  initial-value: 93.52%;
+  inherits: false;
+}
+@property --rg-stop-5 {
+  syntax: "<percentage>";
+  initial-value: 100%;
+  inherits: false;
+}
+
+@layer components {
+  .rg-button {
+    --rg-color-1: var(--glow-base);
+    --rg-color-2: color-mix(in oklab, var(--blue) 55%, var(--glow-base));
+    --rg-color-3: color-mix(in oklab, var(--cyan) 60%, var(--glow-base));
+    --rg-color-4: var(--glow-hi);
+    --rg-color-5: var(--glow-base);
+    --rg-border-color-1: color-mix(in oklab, var(--primary-foreground) 70%, transparent);
+    --rg-border-color-2: color-mix(in oklab, var(--primary-foreground) 25%, transparent);
+    --rg-bg: radial-gradient(
+      var(--rg-spread-x) var(--rg-spread-y) at var(--rg-pos-x) var(--rg-pos-y),
+      var(--rg-color-1) var(--rg-stop-1),
+      var(--rg-color-2) var(--rg-stop-2),
+      var(--rg-color-3) var(--rg-stop-3),
+      var(--rg-color-4) var(--rg-stop-4),
+      var(--rg-color-5) var(--rg-stop-5)
+    );
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 51px;
+    padding: 16px 24px;
+    border: none;
+    border-radius: var(--r-pill);
+    font-family: inherit;
+    font-weight: 600;
+    line-height: 1.2;
+    color: var(--primary-foreground);
+    background: var(--rg-bg);
+    cursor: pointer;
+    text-shadow: 0 0 2px color-mix(in oklab, var(--glow-base) 90%, transparent);
+    overflow: hidden;
+    isolation: isolate;
+    -webkit-tap-highlight-color: transparent;
+    transition:
+      --rg-pos-x 0.75s,
+      --rg-pos-y 0.75s,
+      --rg-spread-x 0.75s,
+      --rg-spread-y 0.75s,
+      --rg-color-1 0.75s,
+      --rg-color-2 0.75s,
+      --rg-color-3 0.75s,
+      --rg-color-4 0.75s,
+      --rg-color-5 0.75s,
+      --rg-border-angle 0.75s,
+      --rg-border-color-1 0.75s,
+      --rg-border-color-2 0.75s,
+      --rg-stop-1 0.75s,
+      --rg-stop-2 0.75s,
+      --rg-stop-3 0.75s,
+      --rg-stop-4 0.75s,
+      --rg-stop-5 0.75s,
+      transform var(--dur-press) var(--ease-out);
+  }
+  .rg-button::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    padding: 1px;
+    border-radius: inherit;
+    background-image: linear-gradient(
+      var(--rg-border-angle),
+      var(--rg-border-color-1),
+      var(--rg-border-color-2)
+    );
+    mask:
+      linear-gradient(#000 0 0) content-box,
+      linear-gradient(#000 0 0);
+    mask-composite: exclude;
+    pointer-events: none;
+  }
+  .rg-button:hover {
+    --rg-pos-x: 0%;
+    --rg-pos-y: 120%;
+    --rg-spread-x: 110.24%;
+    --rg-spread-y: 110.2%;
+    --rg-color-2: var(--glow-hi);
+    --rg-color-3: color-mix(in oklab, var(--cyan) 60%, var(--glow-base));
+    --rg-color-4: color-mix(in oklab, var(--blue) 55%, var(--glow-base));
+    --rg-stop-1: 0%;
+    --rg-stop-2: 10%;
+    --rg-stop-3: 35.44%;
+    --rg-stop-4: 71.34%;
+    --rg-stop-5: 150%;
+    --rg-border-angle: 190deg;
+    --rg-border-color-1: color-mix(in oklab, var(--pink) 15%, transparent);
+    --rg-border-color-2: color-mix(in oklab, var(--pink) 45%, transparent);
+    --rg-line-opacity: 1;
+  }
+  .rg-button:active {
+    transform: scale(0.97);
+  }
+  .rg-label {
+    position: relative;
+    z-index: 1;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+  .rg-icon {
+    display: inline-flex;
+    transition: transform var(--dur-ui) var(--ease-out);
+  }
+  .rg-button:hover .rg-icon {
+    transform: translateX(2px);
+  }
+  .rg-bg {
+    position: absolute;
+    inset: 1px;
+    background: var(--rg-bg);
+    border-radius: inherit;
+  }
+  .rg-shine {
+    position: absolute;
+    inset: 0;
+    container-type: size;
+    border-radius: inherit;
+    mix-blend-mode: soft-light;
+    opacity: var(--rg-line-opacity, 0);
+    transition: opacity 0.3s;
+    overflow: visible;
+  }
+  .rg-shine span {
+    position: absolute;
+    inset: 0;
+    height: 100cqh;
+    aspect-ratio: 1;
+    animation: rg-slide 1.2s ease-in-out infinite alternate;
+    overflow: visible;
+  }
+  .rg-shine span::before {
+    content: "";
+    position: absolute;
+    inset: -100%;
+    background: conic-gradient(
+      from 225deg,
+      transparent 0,
+      var(--primary-foreground) 90deg,
+      transparent 90deg
+    );
+    animation: rg-spin 2.4s infinite linear;
+  }
+}
+@keyframes rg-spin {
+  0% {
+    rotate: 0deg;
+  }
+  15%,
+  35% {
+    rotate: 90deg;
+  }
+  65%,
+  85% {
+    rotate: 270deg;
+  }
+  100% {
+    rotate: 360deg;
+  }
+}
+@keyframes rg-slide {
+  to {
+    transform: translate(calc(100cqw - 100%), 0);
+  }
+}
+/* The shine only runs while hovered; idle buttons cost nothing */
+.rg-shine span,
+.rg-shine span::before {
+  animation-play-state: paused;
+}
+.rg-button:hover .rg-shine span,
+.rg-button:hover .rg-shine span::before {
+  animation-play-state: running;
+}
+@media (prefers-reduced-motion: reduce) {
+  .rg-shine span,
+  .rg-shine span::before {
+    animation: none;
+  }
+}

@@ -1,0 +1,57 @@
+{
+  "name": "revixplus-web",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "biome check",
+    "format": "biome format --write",
+    "typecheck": "next typegen && tsc --noEmit",
+    "screenshots": "node scripts/screenshot-sites.mjs",
+    "typegen": "next typegen"
+  },
+  "dependencies": {
+    "@ai-sdk/anthropic": "^4.0.95",
+    "@ai-sdk/react": "^4.0.165",
+    "@gsap/react": "^2.1.2",
+    "@hookform/resolvers": "^7.0.1",
+    "@react-three/fiber": "^9.8.2",
+    "ai": "^7.0.161",
+    "clsx": "^2.1.1",
+    "embla-carousel-autoplay": "^8.6.0",
+    "embla-carousel-react": "^8.6.0",
+    "geist": "^1.9.0",
+    "gsap": "^3.15.0",
+    "lenis": "^1.3.27",
+    "lucide-react": "^1.66.0",
+    "motion": "^14.9.0",
+    "next": "16.4.4",
+    "react": "19.3.0",
+    "react-dom": "19.3.0",
+    "react-hook-form": "^7.91.0",
+    "resend": "^6.37.0",
+    "schema-dts": "^2.1.0",
+    "sharp": "^0.35.5",
+    "tailwind-merge": "^3.7.0",
+    "three": "^0.187.0",
+    "world-atlas": "2.0.2",
+    "zod": "^4.6.7"
+  },
+  "devDependencies": {
+    "@biomejs/biome": "2.4.2",
+    "@tailwindcss/turbopack": "^4",
+    "@types/node": "^20",
+    "@types/react": "^19",
+    "@types/react-dom": "^19",
+    "@types/three": "^0.187.0",
+    "babel-plugin-react-compiler": "1.0.0",
+    "tailwindcss": "^4",
+    "typescript": "^5"
+  },
+  "packageManager": "pnpm@10.28.0",
+  "engines": {
+    "node": ">=20.9"
+  }
+}
