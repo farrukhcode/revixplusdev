@@ -37,15 +37,12 @@ export const metadata: Metadata = {
   robots: { index: true, follow: true },
 };
 
-// Saved choice wins, then the OS setting. Runs in <head> before first paint (no flash).
-const themeScript = `(function(){try{var t=localStorage.getItem("theme");var d=t?t==="dark":matchMedia("(prefers-color-scheme: dark)").matches;document.documentElement.classList.toggle("dark",d)}catch(e){}})()`;
+// Dark by default (the server renders .dark); only a saved "light" choice switches it. Runs in <head> before first paint (no flash).
+const themeScript = `(function(){try{if(localStorage.getItem("theme")==="light")document.documentElement.classList.remove("dark")}catch(e){}})()`;
 
 export const viewport: Viewport = {
-  // Mirrors --background in globals.css (meta tags can't read CSS variables)
-  themeColor: [
-    { media: "(prefers-color-scheme: dark)", color: "#0a0a12" },
-    { media: "(prefers-color-scheme: light)", color: "#f6f6fb" },
-  ],
+  // Mirrors the dark --background in globals.css (meta tags can't read CSS variables)
+  themeColor: "#0a0a12",
   colorScheme: "dark light",
   width: "device-width",
   initialScale: 1,
